@@ -1,12 +1,12 @@
 import { CalendarEvent, getCalendarEvents } from '../api-client';
-import { DateObject, DailyEventsObject, TableRowObject } from './helpers-types';
+import { DateObject, CalendarEventsPerDay, TableRowObject } from './helpers-types';
 
 class Helpers {
   /**
   * Creates an array of DateObjects containing 7 dates starting from today
   * @returns Array of DateObjects
   */
-  getEventsDates(): DateObject[] {
+  getEventsDatesArray(): DateObject[] {
     const datesArray = [];
     const today = new Date(Date.now());
 
@@ -58,14 +58,14 @@ class Helpers {
     * Gets events data for each day from the 7-days period
     * @returns Promise when resolved returns an array of DailyEventsObjects
     */
-  async getEventsDataForEachDate(): Promise<DailyEventsObject[]> {
-    const eventDates = this.getEventsDates();
-    let dailyEventsObjectsArray: DailyEventsObject[] = [];
+  async getEventsDataForEachDate(): Promise<CalendarEventsPerDay[]> {
+    const eventDates = this.getEventsDatesArray();
+    let dailyEventsObjectsArray: CalendarEventsPerDay[] = [];
 
     for (let i = 0; i < eventDates.length; i++) {
       const { date, parsedDate } = eventDates[i];
       const dailyCalendarEventsArray = await getCalendarEvents(date);
-      let dailyCalendarEventsObject: DailyEventsObject = {};
+      let dailyCalendarEventsObject: CalendarEventsPerDay = {};
       dailyCalendarEventsObject[parsedDate] = dailyCalendarEventsArray;
       dailyEventsObjectsArray.push(dailyCalendarEventsObject);
     }
@@ -98,7 +98,6 @@ class Helpers {
     let finalRow: TableRowObject = { date: 'Total', numberOfEvents: 0, totalDuration: 0, longestEvent: '' }
 
     tableData.forEach(row => {
-      console.log('row', row)
       finalRow.numberOfEvents += row.numberOfEvents
       finalRow.totalDuration += row.totalDuration
     })

@@ -5,8 +5,8 @@ export type DateObject = {
   parsedDate: string;
 }
 
-export type DailyEventsObject = {
-  [key: string]: CalendarEvent[];
+export type CalendarEventsPerDay = {
+  [parsedDate: string]: CalendarEvent[];
 }
 
 export type TableRowObject = {
