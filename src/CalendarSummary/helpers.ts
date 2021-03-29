@@ -72,13 +72,13 @@ class Helpers {
     return dailyEventsObjectsArray;
   }
 
-
   /**
     * Gets table rows data
     * @returns Promise when resolved returns an array of TableRowsObjects
     */
   async getTableRowsData(): Promise<TableRowObject[]> {
-    const tableData: TableRowObject[] = [];
+    const tableWithoutTotal: TableRowObject[] = [];
+    const tableWithTotal: TableRowObject[] = [];
     const dailyEventsObjectsArray = await this.getEventsDataForEachDate();
 
     dailyEventsObjectsArray.forEach(dailyEventsObject => {
@@ -86,10 +86,27 @@ class Helpers {
         const numberOfEvents = this.countDailyNumberOfEvents(dailyEventsObject[date]);
         const totalDuration = this.countDailyTotalDuration(dailyEventsObject[date]);
         const longestEvent = this.findLongestEvent(dailyEventsObject[date]);
-        tableData.push({ date, numberOfEvents, totalDuration, longestEvent })
+        tableWithoutTotal.push({ date, numberOfEvents, totalDuration, longestEvent })
       }
     })
-    return tableData;
+    tableWithTotal.push(...tableWithoutTotal)
+    tableWithTotal.push(this.getTotalsRow(tableWithoutTotal))
+    return tableWithTotal;
+  }
+
+  getTotalsRow(tableData: TableRowObject[]) {
+    let finalRow: TableRowObject = { date: 'Total', numberOfEvents: 0, totalDuration: 0, longestEvent: '' }
+
+    tableData.forEach(row => {
+      console.log('row', row)
+      finalRow.numberOfEvents += row.numberOfEvents
+      finalRow.totalDuration += row.totalDuration
+    })
+
+    finalRow.longestEvent = tableData.reduce(
+      (max: TableRowObject, day: TableRowObject) => day.totalDuration > max.totalDuration ? day : max).longestEvent;
+
+    return finalRow;
   }
 }
 
