@@ -1,0 +1,9 @@
+.calendar-summary-container { 
+  height: 345px;
+  width: auto;
+ }
+
+ .ag-theme-alpine {
+  height: 100%;
+  width: 100%;
+ }
